@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 0
 
 logging:
   level:
@@ -13,12 +13,12 @@ logging:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://ewm-db:5432/ewm-db
+    url: jdbc:postgresql://localhost:6542/ewm-db
     username: ewm
     password: password
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
@@ -33,7 +33,3 @@ spring:
 logbook:
   format:
     style: http
-
-app:
-  stats-server:
-    uri: "http://stats-server:9090"

@@ -346,11 +346,11 @@ public class EventServiceImpl implements EventService {
                 .uri(uri)
                 .ip(ip)
                 .build();
-        statsClient.hit(hitRequest);
+        statsClient.addHit(hitRequest);
     }
 
     private List<GetResponse> loadViewFromStatistic(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        return statsClient.getStats(start, end, uris, unique);
+        return statsClient.getStatistics(start, end, uris, unique);
     }
 
     private void addViewsInEventsPage(Page<Event> page) {
