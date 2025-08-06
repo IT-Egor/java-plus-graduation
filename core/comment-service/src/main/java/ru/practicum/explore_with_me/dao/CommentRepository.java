@@ -1,10 +1,10 @@
-package ru.practicum.explore_with_me.comment.dao;
+package ru.practicum.explore_with_me.dao;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.practicum.explore_with_me.comment.model.Comment;
+import ru.practicum.explore_with_me.model.Comment;
 
 import java.util.Optional;
 
@@ -16,9 +16,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Page<Comment> findAllByAuthorIdOrderByPublishedOnDesc(Long userId, Pageable pageable);
 
-    Page<Comment> findAllByEvent_IdOrderByPublishedOnDesc(Long eventId, Pageable pageable);
+    Page<Comment> findAllByEventIdOrderByPublishedOnDesc(Long eventId, Pageable pageable);
 
     Optional<Comment> findByIdAndAuthorId(Long commentId, Long authorId);
 
-    Page<Comment> findAllByAuthorIdAndEvent_IdOrderByPublishedOnDesc(Long userId, Long eventId, Pageable pageable);
+    Page<Comment> findAllByAuthorIdAndEventIdOrderByPublishedOnDesc(Long userId, Long eventId, Pageable pageable);
 }

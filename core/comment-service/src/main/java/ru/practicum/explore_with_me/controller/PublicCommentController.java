@@ -1,10 +1,10 @@
-package ru.practicum.explore_with_me.comment.controller;
+package ru.practicum.explore_with_me.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore_with_me.dto.comment.CommentResponse;
-import ru.practicum.explore_with_me.comment.service.CommentService;
+import ru.practicum.explore_with_me.service.CommentService;
 
 import java.util.Collection;
 

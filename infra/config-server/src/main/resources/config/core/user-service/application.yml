@@ -12,7 +12,7 @@ logging:
 
 spring:
   datasource:
-    driverClassName: org.postgresql.Driver
+    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:6544/user-db
     username: udb
     password: password

@@ -33,3 +33,9 @@ spring:
 logbook:
   format:
     style: http
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true

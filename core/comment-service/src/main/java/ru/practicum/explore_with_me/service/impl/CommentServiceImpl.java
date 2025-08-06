@@ -1,4 +1,4 @@
-package ru.practicum.explore_with_me.comment.service.impl;
+package ru.practicum.explore_with_me.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,18 +7,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.explore_with_me.comment.dao.CommentRepository;
-import ru.practicum.explore_with_me.comment.mapper.CommentMapper;
-import ru.practicum.explore_with_me.comment.model.Comment;
-import ru.practicum.explore_with_me.comment.service.CommentService;
+import ru.practicum.explore_with_me.dao.CommentRepository;
 import ru.practicum.explore_with_me.dto.comment.CommentResponse;
 import ru.practicum.explore_with_me.dto.comment.MergeCommentRequest;
+import ru.practicum.explore_with_me.dto.event.EventFullDto;
 import ru.practicum.explore_with_me.enums.event.EventState;
-import ru.practicum.explore_with_me.event.dao.EventRepository;
-import ru.practicum.explore_with_me.event.model.Event;
 import ru.practicum.explore_with_me.exception.model.NotFoundException;
 import ru.practicum.explore_with_me.exception.model.PublicationException;
+import ru.practicum.explore_with_me.feign.EventFeign;
 import ru.practicum.explore_with_me.feign.UserFeign;
+import ru.practicum.explore_with_me.mapper.CommentMapper;
+import ru.practicum.explore_with_me.model.Comment;
+import ru.practicum.explore_with_me.service.CommentService;
 
 import java.util.Collection;
 
@@ -30,18 +30,18 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
     private final UserFeign userFeign;
-    private final EventRepository eventRepository;
+    private final EventFeign eventFeign;
 
     @Override
     public CommentResponse createComment(MergeCommentRequest mergeCommentRequest, Long userId) {
         userFeign.getUserById(userId);
-        Event event = findEventById(mergeCommentRequest.getEventId());
+        EventFullDto event = eventFeign.findEventById(mergeCommentRequest.getEventId());
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new PublicationException("Event must be published");
         }
 
-        Comment comment = commentMapper.requestToComment(mergeCommentRequest, event, userId);
+        Comment comment = commentMapper.requestToComment(mergeCommentRequest, event.getId(), userId);
         CommentResponse response = commentMapper.commentToResponse(commentRepository.save(comment));
         log.info("Comment id={} was created by user id={}", response.getId(), response.getAuthor().getId());
         return response;
@@ -70,13 +70,13 @@ public class CommentServiceImpl implements CommentService {
         Comment oldComment = commentRepository.findByIdAndAuthorId(commentId, userId).orElseThrow(() ->
                 new NotFoundException(String.format("Comment with id=%d by author id=%d was not found", commentId, userId)));
 
-        if (!oldComment.getEvent().getId().equals(request.getEventId())) {
+        if (!oldComment.getEventId().equals(request.getEventId())) {
             throw new DataIntegrityViolationException("Event Id not correct");
         }
 
         commentMapper.updateComment(
                 request,
-                findEventById(request.getEventId()),
+                eventFeign.findEventById(request.getEventId()).getId(),
                 oldComment);
 
         CommentResponse response = commentMapper.commentToResponse(commentRepository.save(oldComment));
@@ -89,13 +89,13 @@ public class CommentServiceImpl implements CommentService {
         Comment oldComment = commentRepository.findById(commentId).orElseThrow(() ->
                 new NotFoundException(String.format("Comment with id=%d was not found", commentId)));
 
-        if (!oldComment.getEvent().getId().equals(mergeCommentRequest.getEventId())) {
+        if (!oldComment.getEventId().equals(mergeCommentRequest.getEventId())) {
             throw new DataIntegrityViolationException("Event Id not correct");
         }
 
         commentMapper.updateComment(
                 mergeCommentRequest,
-                findEventById(mergeCommentRequest.getEventId()),
+                eventFeign.findEventById(mergeCommentRequest.getEventId()).getId(),
                 oldComment);
 
         CommentResponse response = commentMapper.commentToResponse(commentRepository.save(oldComment));
@@ -115,7 +115,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Collection<CommentResponse> getAllCommentsByEvent(Long eventId, Integer from, Integer size) {
         log.info("Get all comments for event id={}", eventId);
-        return commentRepository.findAllByEvent_IdOrderByPublishedOnDesc(eventId, createPageable(from, size))
+        return commentRepository.findAllByEventIdOrderByPublishedOnDesc(eventId, createPageable(from, size))
                 .stream()
                 .map(commentMapper::commentToResponse)
                 .toList();
@@ -124,7 +124,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Collection<CommentResponse> getAllCommentsByUserAndEvent(Long userId, Long eventId, Integer from, Integer size) {
         log.info("Get all comments for event id={} and user id={}", eventId, userId);
-        return commentRepository.findAllByAuthorIdAndEvent_IdOrderByPublishedOnDesc(userId, eventId, createPageable(from, size))
+        return commentRepository.findAllByAuthorIdAndEventIdOrderByPublishedOnDesc(userId, eventId, createPageable(from, size))
                 .stream()
                 .map(commentMapper::commentToResponse)
                 .toList();
@@ -140,10 +140,5 @@ public class CommentServiceImpl implements CommentService {
     private Pageable createPageable(Integer from, Integer size) {
         int pageNumber = from / size;
         return PageRequest.of(pageNumber, size);
-    }
-
-    private Event findEventById(Long eventId) {
-        return eventRepository.findById(eventId).orElseThrow(() ->
-                new NotFoundException(String.format("Event with id=%d not found", eventId)));
     }
 }

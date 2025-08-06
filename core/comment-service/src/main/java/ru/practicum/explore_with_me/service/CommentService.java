@@ -1,4 +1,4 @@
-package ru.practicum.explore_with_me.comment.service;
+package ru.practicum.explore_with_me.service;
 
 import jakarta.validation.Valid;
 import ru.practicum.explore_with_me.dto.comment.CommentResponse;
