@@ -13,8 +13,8 @@ logging:
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6544/user-db
-    username: udb
+    url: jdbc:postgresql://localhost:6545/request-db
+    username: rdb
     password: password
   jpa:
     hibernate:

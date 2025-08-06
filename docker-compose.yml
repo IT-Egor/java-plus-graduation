@@ -56,6 +56,23 @@ services:
       interval: 5s
       retries: 10
 
+  request-db:
+    image: postgres:16.1
+    container_name: request-db
+    ports:
+      - "6545:5432"
+    environment:
+      - POSTGRES_DB=request-db
+      - POSTGRES_USER=rdb
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./volumes/postgres/request_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
   stats-db:
     image: postgres:16.1
     container_name: stats-db

@@ -25,7 +25,6 @@ import ru.practicum.explore_with_me.dto.user.UserShortDto;
 import ru.practicum.explore_with_me.enums.event.EventState;
 import ru.practicum.explore_with_me.enums.event.EventStateAction;
 import ru.practicum.explore_with_me.enums.event.SortType;
-import ru.practicum.explore_with_me.enums.request.RequestStatus;
 import ru.practicum.explore_with_me.event.dao.EventRepository;
 import ru.practicum.explore_with_me.event.dao.LocationRepository;
 import ru.practicum.explore_with_me.event.mapper.EventMapper;
@@ -34,11 +33,9 @@ import ru.practicum.explore_with_me.event.model.Location;
 import ru.practicum.explore_with_me.event.service.EventService;
 import ru.practicum.explore_with_me.event.specification.EventFindSpecification;
 import ru.practicum.explore_with_me.exception.model.*;
+import ru.practicum.explore_with_me.feign.RequestFeign;
 import ru.practicum.explore_with_me.feign.StatsFeign;
 import ru.practicum.explore_with_me.feign.UserFeign;
-import ru.practicum.explore_with_me.request.dao.RequestRepository;
-import ru.practicum.explore_with_me.request.mapper.RequestMapper;
-import ru.practicum.explore_with_me.request.model.Request;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -51,13 +48,12 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventServiceImpl implements EventService {
     final EventRepository eventRepository;
-    final RequestRepository requestRepository;
     final EventMapper eventMapper;
-    final RequestMapper requestMapper;
     final LocationRepository locationRepository;
     final UserFeign userFeign;
     final EntityManager entityManager;
     final StatsFeign statsFeign;
+    final RequestFeign requestFeign;
 
     @Override
     public Collection<EventShortDto> getAllEvents(Long userId, Integer from, Integer size) {
@@ -103,11 +99,8 @@ public class EventServiceImpl implements EventService {
         log.info("Get events with {users, states, categories, rangeStart, rangeEnd, from, size} = ({},{},{},{},{},{},{})",
                 users, size, categories, rangeStart, rangeEnd, from, size);
 
-        List<Request> confirmedRequestsByEventId = requestRepository.findAllByEventIdInAndStatus(
-                page.stream().map(Event::getId).toList(), RequestStatus.CONFIRMED);
-
-        Map<Long, List<Request>> eventIdToConfirmedRequests = confirmedRequestsByEventId.stream()
-                .collect(Collectors.groupingBy(request -> request.getEvent().getId()));
+        List<Long> requesterIds = page.stream().map(Event::getId).toList();
+        Map<Long, List<RequestDto>> eventIdToConfirmedRequests = requestFeign.getConfirmedRequests(requesterIds);
 
         List<Long> initiatorIds = page.stream().map(Event::getInitiatorId).toList();
         Map<Long, UserResponse> usersMap = userFeign.getUsers(initiatorIds, 0, initiatorIds.size()).stream()
@@ -236,6 +229,21 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public EventFullDto getEventById(Long eventId) {
+        Event event = findEventById(eventId);
+        EventFullDto eventFullDto = eventMapper.toFullDto(event);
+
+        UserResponse userDto = userFeign.getUserById(event.getInitiatorId());
+        UserShortDto userShortDto = UserShortDto.builder()
+                .id(userDto.getId())
+                .name(userDto.getName())
+                .build();
+
+        eventFullDto.setInitiator(userShortDto);
+        return eventFullDto;
+    }
+
+    @Override
     public EventFullDto getEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest) {
         Event event = findEventById(eventId);
 
@@ -271,72 +279,6 @@ public class EventServiceImpl implements EventService {
         eventMapper.updateUserRequest(updateRequest, event);
         log.info("Update event with eventId = {}", eventId);
         return eventMapper.toFullDto(eventRepository.save(event));
-    }
-
-    @Override
-    public Collection<RequestDto> getRequests(Long userId, Long eventId) {
-        getVerifiedEvent(userId, eventId);
-
-        Set<Request> requests = requestRepository.findAllByEventId(eventId);
-
-        return requests.stream().map(requestMapper::toRequestDto).toList();
-    }
-
-    @Override
-    @Transactional
-    public EventRequestStatusUpdateResult updateRequest(Long userId, Long eventId,
-                                                        EventRequestStatusUpdateRequest updateRequest) {
-        Event event = getVerifiedEvent(userId, eventId);
-
-        List<Request> requests = requestRepository.findAllByIdIn(updateRequest.getRequestIds());
-
-        for (Request request : requests) {
-            if (!request.getEvent().getId().equals(eventId)) {
-                throw new NotFoundException("Request with requestId = " + request.getId() + "does not match eventId = " + eventId);
-            }
-        }
-
-        int confirmedCount = requestRepository.findAllByEventIdAndStatus(eventId, RequestStatus.CONFIRMED).size();
-        int size = updateRequest.getRequestIds().size();
-        int confirmedSize = updateRequest.getStatus().equals(RequestStatus.CONFIRMED) ? size : 0;
-
-        if (event.getParticipantLimit() != 0 && confirmedCount + confirmedSize > event.getParticipantLimit()) {
-            throw new TooManyRequestsException("Event limit exceed");
-        }
-
-        List<RequestDto> confirmedRequests = new ArrayList<>();
-        List<RequestDto> rejectedRequests = new ArrayList<>();
-
-        for (Request request : requests) {
-            if (updateRequest.getStatus().equals(RequestStatus.CONFIRMED)) {
-                request.setStatus(RequestStatus.CONFIRMED);
-                confirmedRequests.add(requestMapper.toRequestDto(request));
-            } else if (updateRequest.getStatus().equals(RequestStatus.REJECTED)) {
-                if (request.getStatus().equals(RequestStatus.CONFIRMED)) {
-                    throw new AlreadyConfirmedException("The request cannot be rejected if it is confirmed");
-                }
-                request.setStatus(RequestStatus.REJECTED);
-                rejectedRequests.add(requestMapper.toRequestDto(request));
-            }
-        }
-
-        requestRepository.saveAll(requests);
-
-        return EventRequestStatusUpdateResult.builder()
-                .confirmedRequests(confirmedRequests)
-                .rejectedRequests(rejectedRequests)
-                .build();
-    }
-
-    private Event getVerifiedEvent(Long userId, Long eventId) {
-        userFeign.getUserById(userId);
-
-        Event event = findEventById(eventId);
-
-        if (!event.getInitiatorId().equals(userId)) {
-            throw new NotFoundException("The event initiator does not match the user id");
-        }
-        return event;
     }
 
     private void stateChanger(Event event, EventStateAction stateAction) {

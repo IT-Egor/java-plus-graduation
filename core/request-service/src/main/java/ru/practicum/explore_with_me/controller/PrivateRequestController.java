@@ -1,11 +1,11 @@
-package ru.practicum.explore_with_me.request.controller;
+package ru.practicum.explore_with_me.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore_with_me.dto.request.RequestDto;
-import ru.practicum.explore_with_me.request.service.RequestService;
+import ru.practicum.explore_with_me.service.RequestService;
 
 import java.util.Collection;
 

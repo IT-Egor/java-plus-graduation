@@ -1,9 +1,11 @@
 package ru.practicum.explore_with_me.exception.controller;
 
+import feign.FeignException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +19,22 @@ import java.util.List;
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
+        String reasonMessage = "Feign error";
+        log.error("FEIGN_ERROR: {}", reasonMessage, e);
+        int status = e.status();
+        if (status == -1) {
+            status = 503;
+        }
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errors(List.of(e.getMessage()))
+                .message(e.getMessage())
+                .reason(reasonMessage)
+                .status(String.valueOf(status))
+                .build();
+        return ResponseEntity.status(status).body(errorResponse);
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)

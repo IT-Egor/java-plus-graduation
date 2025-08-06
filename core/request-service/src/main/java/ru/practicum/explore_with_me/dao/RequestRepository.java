@@ -1,9 +1,9 @@
-package ru.practicum.explore_with_me.request.dao;
+package ru.practicum.explore_with_me.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
-import ru.practicum.explore_with_me.request.model.Request;
+import ru.practicum.explore_with_me.model.Request;
 import ru.practicum.explore_with_me.enums.request.RequestStatus;
 
 import java.util.List;
