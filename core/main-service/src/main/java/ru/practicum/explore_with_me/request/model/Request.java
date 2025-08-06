@@ -3,7 +3,7 @@ package ru.practicum.explore_with_me.request.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.explore_with_me.request.model.enums.RequestStatus;
+import ru.practicum.explore_with_me.enums.request.RequestStatus;
 import ru.practicum.explore_with_me.event.model.Event;
 import ru.practicum.explore_with_me.user.model.User;
 

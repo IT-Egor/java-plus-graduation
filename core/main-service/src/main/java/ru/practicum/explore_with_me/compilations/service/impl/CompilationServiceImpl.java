@@ -9,13 +9,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explore_with_me.compilations.dao.CompilationRepository;
-import ru.practicum.explore_with_me.compilations.dto.CompilationResponse;
-import ru.practicum.explore_with_me.compilations.dto.CompilationDto;
+import ru.practicum.explore_with_me.dto.compilations.CompilationResponse;
+import ru.practicum.explore_with_me.dto.compilations.CompilationDto;
 import ru.practicum.explore_with_me.compilations.mapper.CompilationMapper;
 import ru.practicum.explore_with_me.compilations.model.Compilation;
 import ru.practicum.explore_with_me.compilations.service.CompilationService;
 import ru.practicum.explore_with_me.compilations.specification.CompilationFindSpecification;
-import ru.practicum.explore_with_me.error.model.NotFoundException;
+import ru.practicum.explore_with_me.exception.model.NotFoundException;
 import ru.practicum.explore_with_me.event.dao.EventRepository;
 import java.util.Collection;
 

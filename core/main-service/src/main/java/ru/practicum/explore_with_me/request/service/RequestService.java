@@ -2,7 +2,7 @@ package ru.practicum.explore_with_me.request.service;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.practicum.explore_with_me.request.dto.RequestDto;
+import ru.practicum.explore_with_me.dto.request.RequestDto;
 
 import java.util.Collection;
 

@@ -5,8 +5,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import ru.practicum.explore_with_me.compilations.dto.CompilationResponse;
-import ru.practicum.explore_with_me.compilations.dto.CompilationDto;
+import ru.practicum.explore_with_me.dto.compilations.CompilationResponse;
+import ru.practicum.explore_with_me.dto.compilations.CompilationDto;
 import ru.practicum.explore_with_me.compilations.model.Compilation;
 import ru.practicum.explore_with_me.event.model.Event;
 

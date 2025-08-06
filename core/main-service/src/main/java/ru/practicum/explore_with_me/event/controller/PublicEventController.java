@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explore_with_me.event.dto.EventFullDto;
-import ru.practicum.explore_with_me.event.dto.EventShortDto;
-import ru.practicum.explore_with_me.event.dto.GetAllEventsPublicParams;
-import ru.practicum.explore_with_me.event.model.enums.SortType;
+import ru.practicum.explore_with_me.dto.event.EventFullDto;
+import ru.practicum.explore_with_me.dto.event.EventShortDto;
+import ru.practicum.explore_with_me.dto.event.GetAllEventsPublicParams;
+import ru.practicum.explore_with_me.enums.event.SortType;
 import ru.practicum.explore_with_me.event.service.EventService;
 
 import java.time.LocalDateTime;

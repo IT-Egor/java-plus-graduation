@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explore_with_me.compilations.dto.CompilationResponse;
+import ru.practicum.explore_with_me.dto.compilations.CompilationResponse;
 import ru.practicum.explore_with_me.compilations.service.CompilationService;
 
 import java.util.Collection;

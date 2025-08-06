@@ -1,8 +1,8 @@
 package ru.practicum.explore_with_me.event.service;
 
 import jakarta.servlet.http.HttpServletRequest;
-import ru.practicum.explore_with_me.event.dto.*;
-import ru.practicum.explore_with_me.request.dto.RequestDto;
+import ru.practicum.explore_with_me.dto.event.*;
+import ru.practicum.explore_with_me.dto.request.RequestDto;
 
 import java.util.Collection;
 

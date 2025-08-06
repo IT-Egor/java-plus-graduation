@@ -1,7 +1,7 @@
 package ru.practicum.expore_with_me.service.impl;
 
-import dto.GetResponse;
-import dto.HitRequest;
+import ru.practicum.explore_with_me.dto.stats.GetResponse;
+import ru.practicum.explore_with_me.dto.stats.HitRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;

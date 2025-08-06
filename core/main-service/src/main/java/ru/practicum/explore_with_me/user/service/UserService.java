@@ -1,7 +1,7 @@
 package ru.practicum.explore_with_me.user.service;
 
-import ru.practicum.explore_with_me.user.dto.CreateUserRequest;
-import ru.practicum.explore_with_me.user.dto.UserResponse;
+import ru.practicum.explore_with_me.dto.user.CreateUserRequest;
+import ru.practicum.explore_with_me.dto.user.UserResponse;
 
 import java.util.Collection;
 import java.util.List;

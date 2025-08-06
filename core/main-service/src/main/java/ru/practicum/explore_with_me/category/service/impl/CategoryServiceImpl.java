@@ -8,11 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explore_with_me.category.dao.CategoryRepository;
-import ru.practicum.explore_with_me.category.dto.CategoryDto;
+import ru.practicum.explore_with_me.dto.category.CategoryDto;
 import ru.practicum.explore_with_me.category.mapper.CategoryMapper;
 import ru.practicum.explore_with_me.category.model.Category;
 import ru.practicum.explore_with_me.category.service.CategoryService;
-import ru.practicum.explore_with_me.error.model.NotFoundException;
+import ru.practicum.explore_with_me.exception.model.NotFoundException;
 
 import java.util.Collection;
 

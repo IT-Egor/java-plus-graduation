@@ -3,7 +3,7 @@ package ru.practicum.explore_with_me;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import ru.practicum.client.StatsClient;
+import ru.practicum.explore_with_me.feign.StatsClient;
 
 @SpringBootApplication
 @EnableFeignClients(basePackageClasses = StatsClient.class)

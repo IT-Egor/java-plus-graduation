@@ -1,8 +1,8 @@
 package ru.practicum.explore_with_me.comment.mapper;
 
 import org.mapstruct.*;
-import ru.practicum.explore_with_me.comment.dto.CommentResponse;
-import ru.practicum.explore_with_me.comment.dto.MergeCommentRequest;
+import ru.practicum.explore_with_me.dto.comment.CommentResponse;
+import ru.practicum.explore_with_me.dto.comment.MergeCommentRequest;
 import ru.practicum.explore_with_me.comment.model.Comment;
 import ru.practicum.explore_with_me.event.model.Event;
 import ru.practicum.explore_with_me.user.model.User;

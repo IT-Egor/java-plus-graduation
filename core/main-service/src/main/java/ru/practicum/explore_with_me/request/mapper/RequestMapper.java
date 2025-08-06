@@ -2,7 +2,7 @@ package ru.practicum.explore_with_me.request.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.practicum.explore_with_me.request.dto.RequestDto;
+import ru.practicum.explore_with_me.dto.request.RequestDto;
 import ru.practicum.explore_with_me.request.model.Request;
 
 @Mapper

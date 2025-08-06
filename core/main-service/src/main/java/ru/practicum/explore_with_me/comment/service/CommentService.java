@@ -1,8 +1,8 @@
 package ru.practicum.explore_with_me.comment.service;
 
 import jakarta.validation.Valid;
-import ru.practicum.explore_with_me.comment.dto.CommentResponse;
-import ru.practicum.explore_with_me.comment.dto.MergeCommentRequest;
+import ru.practicum.explore_with_me.dto.comment.CommentResponse;
+import ru.practicum.explore_with_me.dto.comment.MergeCommentRequest;
 
 import java.util.Collection;
 

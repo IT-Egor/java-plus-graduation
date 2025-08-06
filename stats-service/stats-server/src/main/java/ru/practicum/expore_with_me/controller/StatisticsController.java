@@ -1,14 +1,14 @@
 package ru.practicum.expore_with_me.controller;
 
-import dto.GetResponse;
-import dto.HitRequest;
+import ru.practicum.explore_with_me.dto.stats.GetResponse;
+import ru.practicum.explore_with_me.dto.stats.HitRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.client.StatsClient;
+import ru.practicum.explore_with_me.feign.StatsClient;
 import ru.practicum.expore_with_me.service.StatisticsService;
 
 import java.time.LocalDateTime;

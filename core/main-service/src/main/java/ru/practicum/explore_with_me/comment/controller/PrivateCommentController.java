@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explore_with_me.comment.dto.CommentResponse;
-import ru.practicum.explore_with_me.comment.dto.MergeCommentRequest;
+import ru.practicum.explore_with_me.dto.comment.CommentResponse;
+import ru.practicum.explore_with_me.dto.comment.MergeCommentRequest;
 import ru.practicum.explore_with_me.comment.service.CommentService;
 
 import java.util.Collection;

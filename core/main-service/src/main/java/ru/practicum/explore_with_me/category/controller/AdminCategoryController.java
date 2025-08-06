@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.explore_with_me.category.dto.CategoryDto;
+import ru.practicum.explore_with_me.dto.category.CategoryDto;
 import ru.practicum.explore_with_me.category.service.CategoryService;
 
 @Slf4j

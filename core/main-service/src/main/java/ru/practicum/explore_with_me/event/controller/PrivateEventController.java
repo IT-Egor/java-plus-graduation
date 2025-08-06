@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.explore_with_me.event.dto.EventFullDto;
-import ru.practicum.explore_with_me.event.dto.EventRequestStatusUpdateRequest;
-import ru.practicum.explore_with_me.event.dto.EventRequestStatusUpdateResult;
-import ru.practicum.explore_with_me.event.dto.EventShortDto;
-import ru.practicum.explore_with_me.event.dto.NewEventDto;
-import ru.practicum.explore_with_me.event.dto.UpdateEventUserRequest;
+import ru.practicum.explore_with_me.dto.event.EventFullDto;
+import ru.practicum.explore_with_me.dto.event.EventRequestStatusUpdateRequest;
+import ru.practicum.explore_with_me.dto.event.EventRequestStatusUpdateResult;
+import ru.practicum.explore_with_me.dto.event.EventShortDto;
+import ru.practicum.explore_with_me.dto.event.NewEventDto;
+import ru.practicum.explore_with_me.dto.event.UpdateEventUserRequest;
 import ru.practicum.explore_with_me.event.service.EventService;
-import ru.practicum.explore_with_me.request.dto.RequestDto;
+import ru.practicum.explore_with_me.dto.request.RequestDto;
 
 import java.util.Collection;
 

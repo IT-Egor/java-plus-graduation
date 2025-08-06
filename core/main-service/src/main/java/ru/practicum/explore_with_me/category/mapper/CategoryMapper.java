@@ -2,7 +2,7 @@ package ru.practicum.explore_with_me.category.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.practicum.explore_with_me.category.dto.CategoryDto;
+import ru.practicum.explore_with_me.dto.category.CategoryDto;
 import ru.practicum.explore_with_me.category.model.Category;
 
 @Mapper
