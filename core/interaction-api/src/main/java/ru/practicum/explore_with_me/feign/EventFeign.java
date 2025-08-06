@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.practicum.explore_with_me.dto.event.EventFullDto;
 
-@FeignClient(name = "main-service", path = "/internal/events")
+@FeignClient(name = "event-service", path = "/internal/events")
 public interface EventFeign {
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)

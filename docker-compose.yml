@@ -22,17 +22,17 @@ services:
 #      - ewm-db
 #      - stats-server
 
-  ewm-db:
+  event-db:
     image: postgres:16.1
-    container_name: ewm-db
+    container_name: event-db
     ports:
       - "6542:5432"
     environment:
-      - POSTGRES_DB=ewm-db
-      - POSTGRES_USER=ewm
+      - POSTGRES_DB=event-db
+      - POSTGRES_USER=edb
       - POSTGRES_PASSWORD=password
     volumes:
-      - ./volumes/postgres/ewm_data:/var/lib/postgresql/data/
+      - ./volumes/postgres/event_data:/var/lib/postgresql/data/
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s

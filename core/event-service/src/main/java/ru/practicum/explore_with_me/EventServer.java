@@ -7,12 +7,12 @@ import ru.practicum.explore_with_me.exception.controller.ErrorHandler;
 import ru.practicum.explore_with_me.feign.StatsFeign;
 
 @SpringBootApplication(scanBasePackageClasses = {
-        MainService.class,
+        EventServer.class,
         ErrorHandler.class
 })
 @EnableFeignClients(basePackageClasses = StatsFeign.class)
-public class MainService {
+public class EventServer {
     public static void main(String[] args) {
-        SpringApplication.run(MainService.class, args);
+        SpringApplication.run(EventServer.class, args);
     }
 }

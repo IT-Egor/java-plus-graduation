@@ -18,10 +18,10 @@ spring:
           predicates:
             - Path=/admin/comments/{commentId}/**,/users/{userId}/comments/**,/events/{eventId}/comments,/comments/{commentId}
 
-        - id: main_service_route
-          uri: lb://main-service
+        - id: event_service_route
+          uri: lb://event-service
           predicates:
-            - Path=/**
+            - Path=/admin/events/**,/users/{userId}/events/**,/events/**,/admin/categories/**,/categories/**,/admin/compilations/**,/compilations/**
 
 management:
   endpoints:
