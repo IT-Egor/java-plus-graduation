@@ -1,4 +1,4 @@
-package ru.practicum.explore_with_me.user.service.impl;
+package ru.practicum.explore_with_me.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,12 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explore_with_me.exception.model.NotFoundException;
-import ru.practicum.explore_with_me.user.dao.UserRepository;
+import ru.practicum.explore_with_me.dao.UserRepository;
 import ru.practicum.explore_with_me.dto.user.CreateUserRequest;
 import ru.practicum.explore_with_me.dto.user.UserResponse;
-import ru.practicum.explore_with_me.user.mapper.UserMapper;
-import ru.practicum.explore_with_me.user.model.User;
-import ru.practicum.explore_with_me.user.service.UserService;
+import ru.practicum.explore_with_me.mapper.UserMapper;
+import ru.practicum.explore_with_me.model.User;
+import ru.practicum.explore_with_me.service.UserService;
 
 import java.util.Collection;
 import java.util.List;
@@ -58,5 +58,12 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new NotFoundException(String.format("User with id=%d not found", userId));
         }
+    }
+
+    @Override
+    public UserResponse getUserById(Long userId) {
+        log.info("Get user with id = {}", userId);
+        return userMapper.userToResponse(userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id `%d` not found", userId))));
     }
 }

@@ -3,12 +3,11 @@ package ru.practicum.explore_with_me;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import ru.practicum.explore_with_me.feign.StatsFeign;
 
+@EnableFeignClients
 @SpringBootApplication
-@EnableFeignClients(basePackageClasses = StatsFeign.class)
-public class MainService {
+public class UserServer {
     public static void main(String[] args) {
-        SpringApplication.run(MainService.class, args);
+        SpringApplication.run(UserServer.class, args);
     }
 }

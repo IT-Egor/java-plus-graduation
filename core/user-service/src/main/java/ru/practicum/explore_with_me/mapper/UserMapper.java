@@ -1,10 +1,10 @@
-package ru.practicum.explore_with_me.user.mapper;
+package ru.practicum.explore_with_me.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.explore_with_me.dto.user.CreateUserRequest;
 import ru.practicum.explore_with_me.dto.user.UserResponse;
-import ru.practicum.explore_with_me.user.model.User;
+import ru.practicum.explore_with_me.model.User;
 
 @Mapper
 public interface UserMapper {

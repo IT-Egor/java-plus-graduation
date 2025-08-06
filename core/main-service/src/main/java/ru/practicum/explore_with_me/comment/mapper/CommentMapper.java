@@ -1,19 +1,17 @@
 package ru.practicum.explore_with_me.comment.mapper;
 
 import org.mapstruct.*;
+import ru.practicum.explore_with_me.comment.model.Comment;
 import ru.practicum.explore_with_me.dto.comment.CommentResponse;
 import ru.practicum.explore_with_me.dto.comment.MergeCommentRequest;
-import ru.practicum.explore_with_me.comment.model.Comment;
 import ru.practicum.explore_with_me.event.model.Event;
-import ru.practicum.explore_with_me.user.model.User;
 
 @Mapper
 public interface CommentMapper {
-    @Mapping(target = "author", source = "user")
     @Mapping(target = "event", source = "event")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "publishedOn", source = "commentRequest.publishedOn")
-    Comment requestToComment(MergeCommentRequest commentRequest, Event event, User user);
+    Comment requestToComment(MergeCommentRequest commentRequest, Event event, Long authorId);
 
     CommentResponse commentToResponse(Comment comment);
 

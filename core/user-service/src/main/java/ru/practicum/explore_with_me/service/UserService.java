@@ -1,4 +1,4 @@
-package ru.practicum.explore_with_me.user.service;
+package ru.practicum.explore_with_me.service;
 
 import ru.practicum.explore_with_me.dto.user.CreateUserRequest;
 import ru.practicum.explore_with_me.dto.user.UserResponse;
@@ -12,4 +12,6 @@ public interface UserService {
     void deleteUserById(Long userId);
 
     Collection<UserResponse> getUsers(List<Long> userIds, int from, int size);
+
+    UserResponse getUserById(Long userId);
 }

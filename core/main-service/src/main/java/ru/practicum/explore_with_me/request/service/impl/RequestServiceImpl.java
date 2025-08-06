@@ -10,12 +10,11 @@ import ru.practicum.explore_with_me.enums.request.RequestStatus;
 import ru.practicum.explore_with_me.event.dao.EventRepository;
 import ru.practicum.explore_with_me.event.model.Event;
 import ru.practicum.explore_with_me.exception.model.*;
+import ru.practicum.explore_with_me.feign.UserFeign;
 import ru.practicum.explore_with_me.request.dao.RequestRepository;
 import ru.practicum.explore_with_me.request.mapper.RequestMapper;
 import ru.practicum.explore_with_me.request.model.Request;
 import ru.practicum.explore_with_me.request.service.RequestService;
-import ru.practicum.explore_with_me.user.dao.UserRepository;
-import ru.practicum.explore_with_me.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -26,14 +25,13 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
-    private final UserRepository userRepository;
+    private final UserFeign userFeign;
     private final EventRepository eventRepository;
     private final RequestMapper requestMapper;
 
     @Override
     public Collection<RequestDto> getAllUserRequest(Long userId) {
-        userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException(String.format("User with id=%d + not found", userId)));
+        userFeign.getUserById(userId);
         Set<Request> requests = requestRepository.findAllByRequesterId(userId);
         log.info("GET requests by userId = {}",userId);
         return requests.stream().map(requestMapper::toRequestDto).toList();
@@ -47,8 +45,9 @@ public class RequestServiceImpl implements RequestService {
         }
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException(String.format("Event with id = %s, not found", eventId)));
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException(String.format("User with id=%d + not found", userId)));
+
+        userFeign.getUserById(userId);
+
         RequestStatus status = RequestStatus.PENDING;
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
@@ -65,13 +64,13 @@ public class RequestServiceImpl implements RequestService {
             status = RequestStatus.CONFIRMED;
         }
 
-        if (event.getInitiator().getId().equals(user.getId())) {
+        if (event.getInitiatorId().equals(userId)) {
             throw new InitiatorRequestException("Initiator can't submit a request for event");
         }
 
         Request request = Request.builder()
                 .created(LocalDateTime.now())
-                .requester(user)
+                .requesterId(userId)
                 .event(event)
                 .status(status)
                 .build();
@@ -81,8 +80,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestDto cancelRequest(Long userId, Long requestId) {
-        userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException(String.format("User with id=%d + not found", userId)));
+        userFeign.getUserById(userId);
         Request request = requestRepository.findById(requestId).orElseThrow(() ->
                 new NotFoundException("Request not found"));
         request.setStatus(RequestStatus.CANCELED);

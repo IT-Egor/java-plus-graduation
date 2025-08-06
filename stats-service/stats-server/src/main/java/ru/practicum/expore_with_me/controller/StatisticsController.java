@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explore_with_me.feign.StatsClient;
+import ru.practicum.explore_with_me.feign.StatsFeign;
 import ru.practicum.expore_with_me.service.StatisticsService;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @AllArgsConstructor
-public class StatisticsController implements StatsClient {
+public class StatisticsController implements StatsFeign {
     private final StatisticsService statisticsService;
 
     @PostMapping("/hit")

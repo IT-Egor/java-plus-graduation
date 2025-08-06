@@ -1,4 +1,4 @@
-package ru.practicum.explore_with_me.user.controller;
+package ru.practicum.explore_with_me.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore_with_me.dto.user.CreateUserRequest;
 import ru.practicum.explore_with_me.dto.user.UserResponse;
-import ru.practicum.explore_with_me.user.service.UserService;
+import ru.practicum.explore_with_me.service.UserService;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,5 +39,12 @@ public class AdminUserController {
                                              @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                              @Positive @RequestParam(defaultValue = "10") Integer size) {
         return userService.getUsers(ids, from, size);
+    }
+
+
+    @GetMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponse getUserById(@PathVariable Long userId) {
+        return userService.getUserById(userId);
     }
 }

@@ -20,6 +20,8 @@ import ru.practicum.explore_with_me.dto.event.*;
 import ru.practicum.explore_with_me.dto.request.RequestDto;
 import ru.practicum.explore_with_me.dto.stats.GetResponse;
 import ru.practicum.explore_with_me.dto.stats.HitRequest;
+import ru.practicum.explore_with_me.dto.user.UserResponse;
+import ru.practicum.explore_with_me.dto.user.UserShortDto;
 import ru.practicum.explore_with_me.enums.event.EventState;
 import ru.practicum.explore_with_me.enums.event.EventStateAction;
 import ru.practicum.explore_with_me.enums.event.SortType;
@@ -32,15 +34,15 @@ import ru.practicum.explore_with_me.event.model.Location;
 import ru.practicum.explore_with_me.event.service.EventService;
 import ru.practicum.explore_with_me.event.specification.EventFindSpecification;
 import ru.practicum.explore_with_me.exception.model.*;
-import ru.practicum.explore_with_me.feign.StatsClient;
+import ru.practicum.explore_with_me.feign.StatsFeign;
+import ru.practicum.explore_with_me.feign.UserFeign;
 import ru.practicum.explore_with_me.request.dao.RequestRepository;
 import ru.practicum.explore_with_me.request.mapper.RequestMapper;
 import ru.practicum.explore_with_me.request.model.Request;
-import ru.practicum.explore_with_me.user.dao.UserRepository;
-import ru.practicum.explore_with_me.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -53,9 +55,9 @@ public class EventServiceImpl implements EventService {
     final EventMapper eventMapper;
     final RequestMapper requestMapper;
     final LocationRepository locationRepository;
-    final UserRepository userRepository;
+    final UserFeign userFeign;
     final EntityManager entityManager;
-    final StatsClient statsClient;
+    final StatsFeign statsFeign;
 
     @Override
     public Collection<EventShortDto> getAllEvents(Long userId, Integer from, Integer size) {
@@ -107,12 +109,20 @@ public class EventServiceImpl implements EventService {
         Map<Long, List<Request>> eventIdToConfirmedRequests = confirmedRequestsByEventId.stream()
                 .collect(Collectors.groupingBy(request -> request.getEvent().getId()));
 
+        List<Long> initiatorIds = page.stream().map(Event::getInitiatorId).toList();
+        Map<Long, UserResponse> usersMap = userFeign.getUsers(initiatorIds, 0, initiatorIds.size()).stream()
+                .collect(Collectors.toMap(UserResponse::getId, Function.identity()));
+
         return page.stream()
                 .map(event -> {
-                    event.setConfirmedRequests(eventIdToConfirmedRequests.getOrDefault(
+                    EventFullDto eventFullDto = eventMapper.toFullDto(event);
+                    eventFullDto.setConfirmedRequests((long) eventIdToConfirmedRequests.getOrDefault(
                             event.getId(),
                             Collections.emptyList()).size());
-                    return eventMapper.toFullDto(event);
+                    long initiatorId = usersMap.get(event.getInitiatorId()).getId();
+                    String initiatorName = usersMap.get(event.getInitiatorId()).getName();
+                    eventFullDto.setInitiator(UserShortDto.builder().id(initiatorId).name(initiatorName).build());
+                    return eventFullDto;
                 })
                 .toList();
     }
@@ -207,9 +217,9 @@ public class EventServiceImpl implements EventService {
         Location location = findLocationByLatAndLon(newEventDto.getLocation().getLat(),
                 newEventDto.getLocation().getLon());
 
-        User user = findUserById(userId);
+        userFeign.getUserById(userId);
 
-        event.setInitiator(user);
+        event.setInitiatorId(userId);
         event.setLocation(location);
 
         log.info("Create new event with userId = {}", userId);
@@ -319,11 +329,11 @@ public class EventServiceImpl implements EventService {
     }
 
     private Event getVerifiedEvent(Long userId, Long eventId) {
-        findUserById(userId);
+        userFeign.getUserById(userId);
 
         Event event = findEventById(eventId);
 
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiatorId().equals(userId)) {
             throw new NotFoundException("The event initiator does not match the user id");
         }
         return event;
@@ -346,11 +356,11 @@ public class EventServiceImpl implements EventService {
                 .uri(uri)
                 .ip(ip)
                 .build();
-        statsClient.addHit(hitRequest);
+        statsFeign.addHit(hitRequest);
     }
 
     private List<GetResponse> loadViewFromStatistic(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        return statsClient.getStatistics(start, end, uris, unique);
+        return statsFeign.getStatistics(start, end, uris, unique);
     }
 
     private void addViewsInEventsPage(Page<Event> page) {
@@ -426,11 +436,6 @@ public class EventServiceImpl implements EventService {
     private Event findEventByIdAndInitiatorId(Long userId, Long eventId) {
         return eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Event with id=%d and userId=%d not found", eventId, userId)));
-    }
-
-    private User findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException(String.format("User with id=%d + not found", userId)));
     }
 
     private Location findLocationByLatAndLon(Float lat, Float lon) {

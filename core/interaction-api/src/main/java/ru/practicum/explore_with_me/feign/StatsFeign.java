@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @FeignClient(name = "stats-server")
-public interface StatsClient {
+public interface StatsFeign {
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
     void addHit(@Valid @RequestBody HitRequest hitRequest) throws FeignException;

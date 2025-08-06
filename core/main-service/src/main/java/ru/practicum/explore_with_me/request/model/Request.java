@@ -5,7 +5,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.explore_with_me.enums.request.RequestStatus;
 import ru.practicum.explore_with_me.event.model.Event;
-import ru.practicum.explore_with_me.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -31,9 +30,8 @@ public class Request {
     @JoinColumn(name = "event_id", nullable = false)
     Event event;
 
-    @ManyToOne
-    @JoinColumn(name = "requester_id", nullable = false)
-    User requester;
+    @Column(name = "requester_id", nullable = false)
+    Long requesterId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

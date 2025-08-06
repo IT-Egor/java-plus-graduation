@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.explore_with_me.event.model.Event;
-import ru.practicum.explore_with_me.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -28,10 +27,8 @@ public class Comment {
     @Column(name = "published_on", nullable = false)
     LocalDateTime publishedOn;
 
-    @ToString.Exclude
-    @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    User author;
+    @Column(name = "author_id")
+    Long authorId;
 
     @ToString.Exclude
     @JoinColumn(name = "event_id")
