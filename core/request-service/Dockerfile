@@ -9,7 +9,7 @@ FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /app
 
-COPY --from=builder /build/stats-service/stats-server/target/*.jar ./app.jar
-COPY --from=builder /build/stats-service/stats-server/src/main/resources/application-docker.yml ./application.yml
+COPY --from=builder /build/core/request-service/target/*.jar ./app.jar
+COPY --from=builder /build/core/request-service/src/main/resources/application-docker.yml ./application.yml
 
 ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar /app/app.jar"]
