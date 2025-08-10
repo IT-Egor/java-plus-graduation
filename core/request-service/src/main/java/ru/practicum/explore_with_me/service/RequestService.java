@@ -23,4 +23,6 @@ public interface RequestService {
     EventRequestStatusUpdateResult updateRequest(Long userId, Long eventId, @Valid EventRequestStatusUpdateRequest updateRequest);
 
     Map<Long, List<RequestDto>> getConfirmedRequests(List<Long> eventIds);
+
+    boolean isUserInEvent(Long userId, Long eventId);
 }

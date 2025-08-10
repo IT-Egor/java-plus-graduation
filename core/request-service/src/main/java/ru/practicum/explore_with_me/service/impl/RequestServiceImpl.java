@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.stats.proto.ActionTypeProto;
+import ru.practicum.explore_with_me.UserActionGrpcClient;
 import ru.practicum.explore_with_me.dao.RequestRepository;
 import ru.practicum.explore_with_me.dto.event.EventFullDto;
 import ru.practicum.explore_with_me.dto.event.EventRequestStatusUpdateRequest;
@@ -30,6 +32,7 @@ public class RequestServiceImpl implements RequestService {
     private final UserFeign userFeign;
     private final EventFeign eventFeign;
     private final RequestMapper requestMapper;
+    private final UserActionGrpcClient userActionClient;
 
     @Override
     public Collection<RequestDto> getAllUserRequest(Long userId) {
@@ -75,6 +78,9 @@ public class RequestServiceImpl implements RequestService {
                 .eventId(event.getId())
                 .status(status)
                 .build();
+
+        userActionClient.collectUserAction(userId, eventId, ActionTypeProto.ACTION_REGISTER);
+
         log.info("POST request body = {}",request);
         return requestMapper.toRequestDto(requestRepository.save(request));
     }
@@ -147,5 +153,10 @@ public class RequestServiceImpl implements RequestService {
         return confirmedRequestsByEventId.stream()
                 .map(requestMapper::toRequestDto)
                 .collect(Collectors.groupingBy(RequestDto::getEvent));
+    }
+
+    @Override
+    public boolean isUserInEvent(Long userId, Long eventId) {
+        return requestRepository.existsByRequesterIdAndEventId(userId, eventId);
     }
 }
