@@ -148,6 +148,74 @@ services:
       comment-db:
         condition: service_healthy
 
+  collector:
+    image: collector:latest
+    container_name: collector
+    build:
+      context: .
+      dockerfile: stats-service/collector/Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://discovery-server:8761/eureka/apps/COLLECTOR || exit 1
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  aggregator:
+    image: aggregator:latest
+    container_name: aggregator
+    build:
+      context: .
+      dockerfile: stats-service/aggregator/Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://discovery-server:8761/eureka/apps/AGGREGATOR || exit 1
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  analyzer:
+    image: analyzer:latest
+    container_name: analyzer
+    build:
+      context: .
+      dockerfile: stats-service/analyzer/Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://discovery-server:8761/eureka/apps/ANALYZER || exit 1
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      analyzer-db:
+        condition: service_healthy
+
   event-db:
     image: postgres:16.1
     container_name: event-db
@@ -240,6 +308,7 @@ services:
     ports:
       - "9092:9092" # for client connections
       - "9101:9101" # JMX
+      - "29092:29092" # internal
     restart: unless-stopped
     environment:
       KAFKA_NODE_ID: 1
@@ -250,6 +319,11 @@ services:
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
       KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'
       CLUSTER_ID: 'K0EA9p0yEe6MkAAAAkKsEg'
+    healthcheck:
+      test: [ "CMD-SHELL", "kafka-broker-api-versions --bootstrap-server kafka:29092" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   kafka-init-topics:
     image: confluentinc/confluent-local:7.4.3
