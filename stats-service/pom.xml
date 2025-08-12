@@ -16,6 +16,7 @@
         <module>stats-client</module>
         <module>collector</module>
         <module>aggregator</module>
+        <module>analyzer</module>
     </modules>
 
     <properties>
