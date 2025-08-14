@@ -24,6 +24,7 @@ public class AnalyzerController extends RecommendationsControllerGrpc.Recommenda
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
+            log.error("Error while handling get recommendations for user request", e);
         }
     }
 
@@ -36,6 +37,7 @@ public class AnalyzerController extends RecommendationsControllerGrpc.Recommenda
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
+            log.error("Error while handling get similar events request", e);
         }
     }
 
@@ -48,6 +50,7 @@ public class AnalyzerController extends RecommendationsControllerGrpc.Recommenda
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
+            log.error("Error while handling get interactions count request", e);
         }
     }
 }

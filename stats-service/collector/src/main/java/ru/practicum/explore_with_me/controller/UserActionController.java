@@ -26,6 +26,7 @@ public class UserActionController extends UserActionControllerGrpc.UserActionCon
             responseObserver.onCompleted();
         } catch (Exception e) {
             responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
+            log.error("Error while handling collect user action request", e);
         }
     }
 }

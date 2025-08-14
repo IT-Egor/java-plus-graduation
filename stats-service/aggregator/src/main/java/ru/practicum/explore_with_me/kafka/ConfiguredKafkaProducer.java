@@ -6,23 +6,15 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.explore_with_me.config.KafkaConfig;
-
-import java.util.Map;
-import java.util.Properties;
+import ru.practicum.explore_with_me.kafka.mapper.KafkaPropertiesMapper;
 
 @Component
 public class ConfiguredKafkaProducer extends KafkaProducer<String, SpecificRecordBase> {
     private final String topic;
 
     public ConfiguredKafkaProducer(KafkaConfig config) {
-        super(mapToProperties(config.getProducer().getProperties()));
+        super(KafkaPropertiesMapper.mapToProperties(config.getProducer().getProperties()));
         this.topic = config.getProducer().getTopic();
-    }
-
-    private static Properties mapToProperties(Map<String, String> configMap) {
-        Properties properties = new Properties();
-        properties.putAll(configMap);
-        return properties;
     }
 
     public void send(EventSimilarityAvro similarity) {
