@@ -15,6 +15,7 @@ import ru.practicum.explore_with_me.event.service.EventService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -53,7 +54,22 @@ public class PublicEventController {
 
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    public EventFullDto getEventByIdPublic(@PathVariable Long eventId, HttpServletRequest httpServletRequest) {
-        return eventService.getEventByIdPublic(eventId, httpServletRequest);
+    public EventFullDto getEventByIdPublic(@PathVariable Long eventId,
+                                           @RequestHeader("X-EWM-USER-ID") Long userId) {
+        return eventService.getEventByIdPublic(eventId, userId);
+    }
+
+    @GetMapping("/recommendations")
+    @ResponseStatus(HttpStatus.OK)
+    public List<EventFullDto> getRecommendations(@RequestHeader("X-EWM-USER-ID") Long userId) {
+        log.info("Get recommendations for user with id: {}", userId);
+        return eventService.getRecommendations(userId);
+    }
+
+    @PutMapping("{eventId}/like")
+    @ResponseStatus(HttpStatus.OK)
+    public void likeEvent(@RequestHeader("X-EWM-USER-ID") Long userId, @PathVariable Long eventId) {
+        log.info("Like event with id: {} for user with id: {}", eventId, userId);
+        eventService.likeEvent(userId, eventId);
     }
 }

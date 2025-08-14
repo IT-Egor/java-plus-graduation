@@ -23,4 +23,9 @@ public class InternalRequestController implements RequestFeign {
     public Map<Long, List<RequestDto>> getConfirmedRequests(List<Long> eventIds) {
         return requestService.getConfirmedRequests(eventIds);
     }
+
+    @Override
+    public boolean isUserInEvent(Long userId, Long eventId) {
+        return requestService.isUserInEvent(userId, eventId);
+    }
 }
